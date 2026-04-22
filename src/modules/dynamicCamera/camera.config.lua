@@ -63,25 +63,27 @@ function DynamicCamera:AddConfigControls(offsetY)
     end
 
     -- Флажок включения камеры
-    local cameraEnabledCheckbox = CreateFrame("CheckButton", "DCameraEnabledCheckbox", parent, "UICheckButtonTemplate");
-    cameraEnabledCheckbox:SetPoint("TOPLEFT", cameraTitle, "BOTTOMLEFT", 0, -15);
-    cameraEnabledCheckbox:SetScale(0.8);
-    cameraEnabledCheckbox:SetChecked(self.config.enabled);
+	local cameraEnabledCheckbox = CreateFrame("CheckButton", "DCameraEnabledCheckbox", parent, "UICheckButtonTemplate");
+	cameraEnabledCheckbox:SetPoint("TOPLEFT", cameraTitle, "BOTTOMLEFT", 0, -15);
+	cameraEnabledCheckbox:SetScale(0.8);
+	cameraEnabledCheckbox:SetChecked(DynamicCamera.config.enabled);
 
-    local cameraEnabledLabel = parent:CreateFontString("DCameraEnabledLabel", "OVERLAY", "DQuestButtonTitleGossip");
-    cameraEnabledLabel:SetPoint("LEFT", cameraEnabledCheckbox, "RIGHT", 5, 0);
-    cameraEnabledLabel:SetText("Включить Динамическую Камеру");
-    if SetFontColor then
-        SetFontColor(cameraEnabledLabel, "DarkBrown");
-    end
+	local cameraEnabledLabel = parent:CreateFontString("DCameraEnabledLabel", "OVERLAY", "DQuestButtonTitleGossip");
+	cameraEnabledLabel:SetPoint("LEFT", cameraEnabledCheckbox, "RIGHT", 5, 0);
+	cameraEnabledLabel:SetText("Включить Динамическую Камеру");
+	if SetFontColor then
+		SetFontColor(cameraEnabledLabel, "DarkBrown");
+	end
 
-    cameraEnabledCheckbox:SetScript("OnClick", function()
-        DynamicCamera.config.enabled = cameraEnabledCheckbox:GetChecked();
-        DynamicCamera:SaveConfig();
-
-        local status = DynamicCamera.config.enabled and "включена" or "отключена";
-        DialogUI_DebugMessage("DialogUI: Динамическая Камера " .. status);
-    end);
+	cameraEnabledCheckbox:SetScript("OnClick", function()
+		local newState = cameraEnabledCheckbox:GetChecked();
+		DynamicCamera:SetEnabled(newState);
+		
+		-- Обновляем отображение в UI
+		if DynamicCamera.UpdateConfigControls then
+			DynamicCamera:UpdateConfigControls();
+		end
+	end);
 
     -- Флажок Face View
     local faceViewCheckbox = CreateFrame("CheckButton", "DCameraFaceViewCheckbox", parent, "UICheckButtonTemplate");
@@ -163,15 +165,19 @@ function DynamicCamera:AddConfigControls(offsetY)
     end
 
     -- Кнопка сохранения текущего пресета камеры
-    local savePresetBtn = CreateFrame("Button", "DSavePresetButton", parent, "DUIPanelButtonTemplate");
-    savePresetBtn:SetPoint("TOPLEFT", presetsLabel, "BOTTOMLEFT", 0, -10);
-    savePresetBtn:SetWidth(150);
-    savePresetBtn:SetHeight(25);
-    savePresetBtn:SetText("Сохранить Текущий Вид");
-    savePresetBtn:SetScript("OnClick", function()
-        DynamicCamera:SaveCameraPreset();
-        DialogUI_DebugMessage("DialogUI: Текущий вид сохранен как пользовательский пресет");
-    end);
+	local savePresetBtn = CreateFrame("Button", "DSavePresetButton", parent, "DUIPanelButtonTemplate");
+	savePresetBtn:SetPoint("TOPLEFT", presetsLabel, "BOTTOMLEFT", 0, -10);
+	savePresetBtn:SetWidth(150);
+	savePresetBtn:SetHeight(25);
+	savePresetBtn:SetText("Сохранить Текущий Вид");
+	savePresetBtn:SetScript("OnClick", function()
+		if DynamicCamera.SaveCameraPreset then
+			DynamicCamera:SaveCameraPreset();
+			DialogUI_DebugMessage("DialogUI: Текущий вид сохранен как пользовательский пресет");
+		else
+			DialogUI_DebugMessage("DialogUI: ОШИБКА - Метод SaveCameraPreset не найден");
+		end
+	end);
 
     -- Информация о пресете
     local presetInfo = parent:CreateFontString("DCameraPresetInfo", "OVERLAY", "DQuestButtonTitleGossip");
@@ -184,43 +190,46 @@ function DynamicCamera:AddConfigControls(offsetY)
     end
 
     -- Кнопки пресетов
-    local presets = {"Cinematic", "Close", "Normal", "Wide"};
-    local presetNames = {"Кинематогр.", "Близко", "Обычный", "Широкий"};
-    for i, presetName in ipairs(presets) do
-        local button = CreateFrame("Button", "DCamera" .. presetName .. "Button", parent, "DUIPanelButtonTemplate");
-        button:SetText(presetNames[i]);
-        button:SetWidth(80);
-        button:SetHeight(22);
+	local presets = {"Cinematic", "Close", "Normal", "Wide"};
+	local presetNames = {"Кинематогр.", "Близко", "Обычный", "Широкий"};
+	for i, presetName in ipairs(presets) do
+		local button = CreateFrame("Button", "DCamera" .. presetName .. "Button", parent, "DUIPanelButtonTemplate");
+		button:SetText(presetNames[i]);
+		button:SetWidth(80);
+		button:SetHeight(22);
 
-        -- Располагаем кнопки в ряд
-        button:SetPoint("TOPLEFT", presetInfo, "BOTTOMLEFT", (i-1) * 85, -15);
-        button:SetScript("OnClick", function()
-            DynamicCamera:ApplyPreset(string.lower(presetName));
-            DialogUI_DebugMessage("DialogUI: Вид '" .. presetNames[i] .. "' применен");
-            -- Обновляем отображение
-            if DynamicCamera.settingsLabel then
-                DynamicCamera.settingsLabel:SetText("Дистанция: " .. string.format("%.1f", DynamicCamera.config.faceViewDistance) .. 
-                                                   " | Режим: " .. (DynamicCamera.config.useFaceView and "Лицом" or "Обычный"));
-            end
-        end);
-    end
+		-- Располагаем кнопки в ряд
+		button:SetPoint("TOPLEFT", presetInfo, "BOTTOMLEFT", (i-1) * 85, -15);
+		button:SetScript("OnClick", function()
+			if DynamicCamera.ApplyPreset then
+				DynamicCamera:ApplyPreset(string.lower(presetName));
+				DialogUI_DebugMessage("DialogUI: Вид '" .. presetNames[i] .. "' применен");
+				-- Обновляем отображение
+				if DynamicCamera.settingsLabel then
+					DynamicCamera.settingsLabel:SetText("Дистанция: " .. string.format("%.1f", DynamicCamera.config.faceViewDistance) .. 
+													   " | Режим: " .. (DynamicCamera.config.useFaceView and "Лицом" or "Обычный"));
+				end
+			else
+				DialogUI_DebugMessage("DialogUI: ОШИБКА - Метод ApplyPreset не найден");
+			end
+		end);
+	end
 
     -- Отладка: Подтверждаем создание раздела камеры
     DialogUI_DebugMessage("DialogUI: Раздел камеры создан с " .. #presets .. " кнопками пресетов");
 end
 
--- Обновить существующие элементы управления конфигурации текущими значениями
 function DynamicCamera:UpdateConfigControls()
-    local self = DynamicCamera; -- Гарантируем, что self определен
+    local self = DynamicCamera;
     
+    -- Проверяем существование фреймов перед обновлением
     local checkbox = getglobal("DCameraEnabledCheckbox");
-    if checkbox then
+    if checkbox and checkbox.SetChecked then
         checkbox:SetChecked(self.config.enabled);
     end
 
-    -- Обновляем флажок Face View
     local faceViewCheckbox = getglobal("DCameraFaceViewCheckbox");
-    if faceViewCheckbox then
+    if faceViewCheckbox and faceViewCheckbox.SetChecked then
         faceViewCheckbox:SetChecked(self.config.useFaceView);
     end
 
@@ -229,7 +238,7 @@ function DynamicCamera:UpdateConfigControls()
                                    " | Режим: " .. (self.config.useFaceView and "Лицом" or "Обычный"));
     end
 
-    -- Обновляем значения чекбоксов (НЕ СОЗДАЕМ НОВЫЕ)
+    -- Обновляем значения чекбоксов
     local checkboxData = {
         {name = "Разговоры", config = "enableForGossip"},
         {name = "Торговцы", config = "enableForVendors"},
@@ -239,7 +248,7 @@ function DynamicCamera:UpdateConfigControls()
 
     for i, data in ipairs(checkboxData) do
         local checkbox = getglobal("DCamera" .. data.name .. "Checkbox");
-        if checkbox then
+        if checkbox and checkbox.SetChecked then
             checkbox:SetChecked(self.config[data.config]);
         end
     end
