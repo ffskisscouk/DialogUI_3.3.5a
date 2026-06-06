@@ -1,5 +1,5 @@
 -- DialogueUI Money Frame
--- Полностью изолированная версия для WoW 3.3.5
+-- Fully isolated version for WoW 3.3.5
 
 DUI_MONEY_ICON_WIDTH = 19;
 DUI_MONEY_ICON_WIDTH_SMALL = 13;
@@ -87,9 +87,9 @@ DUI_MoneyTypeInfo["SEND_MAIL_COD"] = {
     canPickup = 1,
 };
 
--- ИСПРАВЛЕНО: используем this вместо self для совместимости с WoW 3.3.5
+-- Use this instead of self for compatibility with WoW 3.3.5
 function DUI_MoneyFrame_OnLoad()
-    local frame = this; -- this указывает на фрейм в OnLoad
+    local frame = this; -- this points to the frame in OnLoad
     
     frame.moneyType = "PLAYER";
     frame.info = DUI_MoneyTypeInfo["PLAYER"];
@@ -202,9 +202,9 @@ function DUI_MoneyFrame_OnEvent(event)
     end
 end
 
--- ИСПРАВЛЕНО: принимаем frame как параметр или используем this
+-- Accept frame as a parameter or fall back to this
 function DUI_MoneyFrame_UpdateMoney(frame)
-    -- Если frame не передан, используем this (для вызовов из XML)
+    -- If frame is not provided, use this (for calls from XML)
     if not frame then
         frame = this;
     end
@@ -220,7 +220,7 @@ function DUI_MoneyFrame_UpdateMoney(frame)
 
     local money = 0;
     if frame.info and frame.info.UpdateFunc then
-        -- Сохраняем текущий this и устанавливаем frame как this для UpdateFunc
+        -- Save the current this and set frame as this for UpdateFunc
         local oldThis = this;
         this = frame;
         
