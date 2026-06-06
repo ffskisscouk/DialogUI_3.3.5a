@@ -1,7 +1,7 @@
--- Модуль динамической камеры для DialogUI
--- Совместимо с WoW 3.3.5
+-- Dynamic Camera module for DialogUI
+-- Compatible with WoW 3.3.5
 
--- Инициализация модуля камеры
+-- Camera module initialization
 DynamicCamera = {};
 DynamicCamera.isActive = false;
 DynamicCamera.originalDistance = nil;
@@ -12,13 +12,13 @@ DynamicCamera.transitionActive = false;
 DynamicCamera.initialized = false;
 DynamicCamera.savedMaxDistance = nil;
 
--- Используем ГЛОБАЛЬНУЮ переменную (сохраняется в WTF папке автоматически)
+-- Use GLOBAL variable (automatically saved in WTF folder)
 if not _G.DialogUI_CameraSaved then
     _G.DialogUI_CameraSaved = {};
 end
 DialogUI_CameraSaved = _G.DialogUI_CameraSaved;
 
--- Настройки камеры по умолчанию
+-- Default camera settings
 DynamicCamera.config = {
     enabled = true,
     interactionDistance = 3,
@@ -38,14 +38,14 @@ DynamicCamera.config = {
     useFirstPersonView = true,
 };
 
--- Принудительная загрузка из глобального сохранения
+-- Force load from global saved data
 function DynamicCamera:ForceLoadConfig()
     if DialogUI_CameraSaved then
         if DialogUI_CameraSaved.enabled ~= nil then
             self.config.enabled = DialogUI_CameraSaved.enabled;
         else
-            -- Если нет сохранения, устанавливаем значение по умолчанию и сохраняем
-            self.config.enabled = false;  -- МЕНЯЕМ ПО УМОЛЧАНИЮ НА ВЫКЛ
+            -- If no saved value, set default and save
+            self.config.enabled = false;  -- DEFAULT CHANGED TO OFF
             self:ForceSaveConfig();
         end
         
@@ -86,17 +86,17 @@ function DynamicCamera:ForceLoadConfig()
             self.config.useFirstPersonView = DialogUI_CameraSaved.useFirstPersonView;
         end
     else
-        -- Нет сохранения - камера выключена по умолчанию
+        -- No saved data — camera disabled by default
         self.config.enabled = false;
         self:ForceSaveConfig();
     end
     
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Загружена конфигурация камеры (включена: " .. (self.config.enabled and "ДА" or "НЕТ") .. ")");
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Camera configuration loaded (enabled: " .. (self.config.enabled and "YES" or "NO") .. ")");
     end
 end
 
--- Принудительное сохранение в глобальное хранилище
+-- Force save to global storage
 function DynamicCamera:ForceSaveConfig()
     DialogUI_CameraSaved = {
         enabled = self.config.enabled,
@@ -117,15 +117,15 @@ function DynamicCamera:ForceSaveConfig()
         useFirstPersonView = self.config.useFirstPersonView,
     };
     
-    -- Обновляем глобальную ссылку
+    -- Update global reference
     _G.DialogUI_CameraSaved = DialogUI_CameraSaved;
     
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Конфигурация камеры сохранена (включена: " .. (self.config.enabled and "ДА" or "НЕТ") .. ")");
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Camera configuration saved (enabled: " .. (self.config.enabled and "YES" or "NO") .. ")");
     end
 end
 
--- Функция для немедленного сохранения состояния enabled
+-- Immediately save enabled state
 function DynamicCamera:SetEnabled(state)
     self.config.enabled = state;
     self:ForceSaveConfig();
@@ -136,11 +136,11 @@ function DynamicCamera:SetEnabled(state)
     end
     
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Динамическая камера " .. (state and "включена" or "отключена"));
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Dynamic camera " .. (state and "enabled" or "disabled"));
     end
 end
 
--- Сохранить исходную позицию камеры
+-- Save original camera position
 function DynamicCamera:SaveOriginalPosition()
     if not self.isActive then
         if GetCVar then
@@ -158,15 +158,10 @@ function DynamicCamera:SaveOriginalPosition()
     end
 end
 
--- Применить позицию камеры для взаимодействия
+-- Apply camera position for interaction
 function DynamicCamera:ApplyInteractionPosition()
-    if not self.config.enabled then
-        return;
-    end
-
-    if self.isActive then
-        return;
-    end
+    if not self.config.enabled then return; end
+    if self.isActive then return; end
 
     self:SaveOriginalPosition();
 
@@ -179,11 +174,9 @@ function DynamicCamera:ApplyInteractionPosition()
     self.isActive = true;
 end
 
--- Применить вид "лицом к NPC"
+-- Apply "face NPC" view
 function DynamicCamera:ApplyFaceView()
-    if not self.config.useFaceView then
-        return;
-    end
+    if not self.config.useFaceView then return; end
 
     self.savedMaxDistance = tonumber(GetCVar("cameraDistanceMax")) or 15;
     
@@ -213,11 +206,9 @@ function DynamicCamera:ApplyFaceView()
     end
 end
 
--- Восстановить исходную позицию камеры
+-- Restore original camera position
 function DynamicCamera:RestoreOriginalPosition()
-    if not self.originalDistance then
-        return;
-    end
+    if not self.originalDistance then return; end
 
     if SetView then
         if self.originalView and self.originalView ~= 1 then
@@ -259,7 +250,7 @@ function DynamicCamera:RestoreOriginalPosition()
     self.savedMaxDistance = nil;
 end
 
--- Принудительное восстановление камеры
+-- Force restore camera
 function DynamicCamera:ForceRestore()
     if SetView then
         SetView(2);
@@ -274,7 +265,7 @@ function DynamicCamera:ForceRestore()
     self.isActive = false;
 end
 
--- Применить настройки камеры немедленно
+-- Apply camera settings immediately
 function DynamicCamera:ApplyImmediateCamera(distance, pitch, yaw)
     if SetCVar and distance then
         SetCVar("cameraDistanceMax", tostring(distance));
@@ -291,7 +282,7 @@ function DynamicCamera:ApplyImmediateCamera(distance, pitch, yaw)
     end
 end
 
--- Обработчики событий
+-- Event handlers
 function DynamicCamera:OnGossipShow()
     if not self.config.enabled then return; end
     if self.config.enableForGossip then self:ApplyInteractionPosition(); end
@@ -334,17 +325,17 @@ function DynamicCamera:OnQuestFinished()
     if self.config.enableForQuests and self.isActive then self:RestoreOriginalPosition(); end
 end
 
--- Загрузить конфигурацию
+-- Load config
 function DynamicCamera:LoadConfig()
     self:ForceLoadConfig();
 end
 
--- Сохранить конфигурацию
+-- Save config
 function DynamicCamera:SaveConfig()
     self:ForceSaveConfig();
 end
 
--- Применить пресет
+-- Apply preset
 function DynamicCamera:ApplyPreset(presetName)
     if presetName == "cinematic" then
         self.config.faceViewDistance = 2.0;
@@ -362,11 +353,11 @@ function DynamicCamera:ApplyPreset(presetName)
 
     self:ForceSaveConfig();
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Пресет камеры '" .. presetName .. "' применен");
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Camera preset '" .. presetName .. "' applied");
     end
 end
 
--- Сохранить текущий вид камеры
+-- Save current camera view
 function DynamicCamera:SaveCameraPreset()
     local currentDistance = tonumber(GetCVar("cameraDistanceMax")) or self.config.faceViewDistance;
     local currentPitch = nil;
@@ -384,11 +375,11 @@ function DynamicCamera:SaveCameraPreset()
     self:ForceSaveConfig();
     
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Текущий вид камеры сохранен (дистанция: " .. string.format("%.1f", currentDistance) .. ")");
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Current camera view saved (distance: " .. string.format("%.1f", currentDistance) .. ")");
     end
 end
 
--- Обновить контролы
+-- Update controls
 function DynamicCamera:UpdateConfigControls()
     local checkbox = getglobal("DCameraEnabledCheckbox");
     if checkbox and checkbox.SetChecked then
@@ -396,7 +387,7 @@ function DynamicCamera:UpdateConfigControls()
     end
 end
 
--- Добавить контролы в конфиг
+-- Add controls to config
 function DynamicCamera:AddConfigControls(offsetY)
     local parent = getglobal("DConfigScrollChild") or getglobal("DConfigFrame");
     if not parent then return; end
@@ -413,7 +404,7 @@ function DynamicCamera:AddConfigControls(offsetY)
 
     local cameraTitle = parent:CreateFontString("DCameraSectionTitle", "OVERLAY", "DQuestButtonTitleGossip");
     cameraTitle:SetPoint("TOPLEFT", fontSelectLabel, "BOTTOMLEFT", 0, -yOffset);
-    cameraTitle:SetText("Настройки Камеры");
+    cameraTitle:SetText("Camera Settings");
     cameraTitle:SetJustifyH("LEFT");
     if SetFontColor then SetFontColor(cameraTitle, "DarkBrown"); end
 
@@ -424,7 +415,7 @@ function DynamicCamera:AddConfigControls(offsetY)
 
     local cameraEnabledLabel = parent:CreateFontString("DCameraEnabledLabel", "OVERLAY", "DQuestButtonTitleGossip");
     cameraEnabledLabel:SetPoint("LEFT", cameraEnabledCheckbox, "RIGHT", 5, 0);
-    cameraEnabledLabel:SetText("Включить Динамическую Камеру");
+    cameraEnabledLabel:SetText("Enable Dynamic Camera");
     if SetFontColor then SetFontColor(cameraEnabledLabel, "DarkBrown"); end
 
     cameraEnabledCheckbox:SetScript("OnClick", function()
@@ -432,7 +423,7 @@ function DynamicCamera:AddConfigControls(offsetY)
     end);
 end
 
--- Инициализация
+-- Initialization
 function DynamicCamera:Initialize()
     if self.initialized then return; end
 
@@ -464,11 +455,11 @@ function DynamicCamera:Initialize()
     self.initialized = true;
 
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Динамическая камера инициализирована (включена: " .. (self.config.enabled and "ДА" or "НЕТ") .. ")");
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Dynamic camera initialized (enabled: " .. (self.config.enabled and "YES" or "NO") .. ")");
     end
 end
 
--- Слэш-команды
+-- Slash commands
 SlashCmdList["DYNAMICCAMERA_TOGGLE"] = function()
     DynamicCamera:SetEnabled(not DynamicCamera.config.enabled);
 end;
@@ -487,11 +478,11 @@ SlashCmdList["CAMERA_PRESET"] = function(msg)
         DynamicCamera:ApplyPreset(preset);
     else
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Доступные пресеты: cinematic, close, normal, wide");
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Available presets: cinematic, close, normal, wide");
         end
     end
 end;
 SLASH_CAMERA_PRESET1 = "/camerapreset";
 
--- Автоинициализация
+-- Auto‑initialize
 DynamicCamera:Initialize();
