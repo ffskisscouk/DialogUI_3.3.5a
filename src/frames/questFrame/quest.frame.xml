@@ -133,7 +133,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                this:SetText("Завершить");
+                                this:SetText("Complete");
                             </OnLoad>
                             <OnClick>
                                 DQuestRewardCompleteButton_OnClick();
@@ -369,7 +369,7 @@
                         </Anchors>
                         <Scripts>
                             <OnLoad>
-                                this:SetText("Отмена");
+                                this:SetText("Cancel");
                             </OnLoad>
                             <OnClick>
                                 DQuestGoodbyeButton_OnClick();
@@ -405,7 +405,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                this:SetText("Продолжить");
+                                this:SetText("Continue");
                             </OnLoad>
                             <OnClick>
                                 DQuestProgressCompleteButton_OnClick();
@@ -914,7 +914,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                this:SetText("До свидания");
+                                this:SetText("Farewell");
                             </OnLoad>
                             <OnClick>
                                 HideUIPanel(DQuestFrame);
