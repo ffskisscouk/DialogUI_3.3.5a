@@ -188,7 +188,7 @@
                                             </Anchors>
                                         </FontString>
                                         <FontString name="DQuestRewardRewardTitleText"
-                                            inherits="DQuestTitleFont" text="Награды"
+                                            inherits="DQuestTitleFont" text="Rewards"
                                             justifyH="LEFT">
                                             <Size>
                                                 <AbsDimension x="370" y="0" />
@@ -203,7 +203,7 @@
                                             </Anchors>
                                         </FontString>
                                         <FontString name="DQuestRewardItemChooseText"
-                                            inherits="DQuestFont" text="Выберите награду:"
+                                            inherits="DQuestFont" text="Choose a reward:"
                                             justifyH="LEFT">
                                             <Size>
                                                 <AbsDimension x="295" y="30" />
@@ -454,7 +454,7 @@
                                                 </Anchor>
                                             </Anchors>
                                         </FontString>
-                                        <FontString name="DQuestProgressRequiredItemsText" inherits="DQuestTitleFont" text="Требуемые предметы:" justifyH="LEFT">
+                                        <FontString name="DQuestProgressRequiredItemsText" inherits="DQuestTitleFont" text="Required items:" justifyH="LEFT">
                                             <Size>
                                                 <AbsDimension x="295" y="0"/>
                                             </Size>
@@ -466,7 +466,7 @@
                                                 </Anchor>
                                             </Anchors>
                                         </FontString>
-                                        <FontString name="DQuestProgressRequiredMoneyText" inherits="DQuestFontNormalSmall" text="Требуется золота:" justifyH="LEFT">
+                                        <FontString name="DQuestProgressRequiredMoneyText" inherits="DQuestFontNormalSmall" text="Gold required:" justifyH="LEFT">
                                             <Anchors>
                                                 <Anchor point="TOPLEFT" relativeTo="DQuestProgressRequiredItemsText" relativePoint="BOTTOMLEFT">
                                                     <Offset>
@@ -699,7 +699,7 @@
                                             <Layer level="BACKGROUND">
                                                 <FontString name="DQuestDetailObjectiveTitleText"
                                                     inherits="DQuestTitleFont"
-                                                    text="Цели задания:" justifyH="LEFT">
+                                                    text="Quest objectives:" justifyH="LEFT">
                                                     <Size>
                                                         <AbsDimension x="370" y="0" />
                                                     </Size>
@@ -729,7 +729,7 @@
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString name="DQuestDetailRewardTitleText"
-                                                    inherits="DQuestTitleFont" text="Награды:"
+                                                    inherits="DQuestTitleFont" text="Rewards:"
                                                     justifyH="LEFT">
                                                     <Size>
                                                         <AbsDimension x="370" y="0" />
@@ -745,7 +745,7 @@
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString name="DQuestDetailItemChooseText"
-                                                    inherits="DQuestFont" text="Вы получите на выбор:"
+                                                    inherits="DQuestFont" text="You will receive a choice of:"
                                                     justifyH="LEFT">
                                                     <Size>
                                                         <AbsDimension x="370" y="0" />
@@ -761,7 +761,7 @@
                                                     </Anchors>
                                                 </FontString>
                                                 <FontString name="DQuestDetailItemReceiveText"
-                                                    inherits="DQuestFont" text="Получите награду:"
+                                                    inherits="DQuestFont" text="Receive reward:"
                                                     justifyH="LEFT">
                                                     <Anchors>
                                                         <Anchor point="TOPLEFT" />
@@ -959,7 +959,7 @@
                                             </Anchors>
                                         </FontString>
                                         <FontString name="DCurrentQuestsText"
-                                            inherits="DQuestTitleFont" text="Текущие задания:"
+                                            inherits="DQuestTitleFont" text="Current quests:"
                                             justifyH="LEFT">
                                             <Size>
                                                 <AbsDimension x="370" y="0" />
@@ -986,7 +986,7 @@
                                             </Anchors>
                                         </Texture>
                                         <FontString name="DAvailableQuestsText"
-                                            inherits="DQuestTitleFont" text="Доступные задания:"
+                                            inherits="DQuestTitleFont" text="Available quests:"
                                             justifyH="LEFT">
                                             <Size>
                                                 <AbsDimension x="300" y="0" />
