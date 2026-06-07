@@ -416,7 +416,7 @@ xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
                     </Anchors>
                     <Scripts>
                         <OnLoad>
-                            this:SetText("Закрыть");
+                            this:SetText("Goodbye");
                         </OnLoad>
                         <OnClick>
                             CloseGossip();
