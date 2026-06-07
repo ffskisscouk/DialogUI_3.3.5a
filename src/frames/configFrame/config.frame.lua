@@ -1,14 +1,14 @@
 ---@diagnostic disable: undefined-global
 
--- Система конфигурации DialogUI
+-- DialogUI configuration system
 DialogUI_Config = {
-    scale = 1.0,        -- Масштаб фрейма (0.5 - 2.0)
-    alpha = 1.0,        -- Прозрачность фрейма (0.1 - 1.0)
-    fontSize = 1.0,     -- Множитель размера шрифта (0.5 - 2.0)
-    fontFile = "frizqt___cyr.ttf"  -- Шрифт по умолчанию
+    scale = 1.0,        -- Frame scale (0.5 - 2.0)
+    alpha = 1.0,        -- Frame transparency (0.1 - 1.0)
+    fontSize = 1.0,     -- Font size multiplier (0.5 - 2.0)
+    fontFile = "frizqt___cyr.ttf"  -- Default font
 };
 
--- Доступные шрифты
+-- Available fonts
 local AVAILABLE_FONTS = {
     { name = "Magistral", file = "frizqt___cyr.ttf" },
     { name = "PTNarrow", file = "frizqt__.ttf" },
@@ -29,27 +29,27 @@ function SetFontColor(fontObject, key)
     end
 end
 
--- Функции главного окна конфигурации
+-- Main configuration window functions
 function DConfigFrame_OnLoad()
-    -- Запрещаем перемещение, так как окно всегда центрировано
+    -- Disable moving since the window is always centered
     this:SetMovable(false);
     this:EnableMouse(true);
 
-    -- Информационный текст с описанием доступных команд
-    local infoText = "Настройка параметров интерфейса DialogUI.\n\n" ..
-                    "• Масштаб: Изменение размера окон диалогов (от 0.5 до 2.0)\n" ..
-                    "• Прозрачность: Настройка прозрачности фона (от 10% до 100%)\n" ..
-                    "• Размер шрифта: Изменение размера текста в диалогах (от 0.5 до 2.0)\n" ..
-                    "• Шрифт: Выбор шрифта для текста в диалогах\n" ..
-                    "• Динамическая камера: Автоматическая настройка камеры при разговоре с NPC\n\n" ..
-                    "Доступные команды:\n" ..
-                    "▪ /dialogui или /dialogui config - открыть окно настроек\n" ..
-                    "▪ /dialogui reset - сбросить все настройки\n" ..
-                    "▪ /togglecamera или /dcamera - вкл/выкл динамическую камеру\n" ..
-                    "▪ /testcamera - проверить позиционирование камеры\n" ..
-                    "▪ /camerapreset [preset] - применить пресет камеры (cinematic, close, normal, wide)\n\n" ..
-                    "Значения можно изменять непосредственно в полях ввода.\n" ..
-                    "Все изменения применяются и сохраняются автоматически.";
+    -- Info text describing available commands
+    local infoText = "Configure DialogUI interface parameters.\n\n" ..
+                    "• Scale: Change the size of dialog windows (0.5 to 2.0)\n" ..
+                    "• Transparency: Adjust background transparency (10% to 100%)\n" ..
+                    "• Font size: Change the text size in dialogs (0.5 to 2.0)\n" ..
+                    "• Font: Choose the font for dialog text\n" ..
+                    "• Dynamic camera: Automatically adjust the camera when talking to an NPC\n\n" ..
+                    "Available commands:\n" ..
+                    "▪ /dialogui or /dialogui config - open settings window\n" ..
+                    "▪ /dialogui reset - reset all settings\n" ..
+                    "▪ /togglecamera or /dcamera - toggle dynamic camera on/off\n" ..
+                    "▪ /testcamera - test camera positioning\n" ..
+                    "▪ /camerapreset [preset] - apply a camera preset (cinematic, close, normal, wide)\n\n" ..
+                    "Values can be changed directly in the input fields.\n" ..
+                    "All changes are applied and saved automatically.";
 
     local infoTextObj = getglobal("DConfigInfoText");
     if infoTextObj then
@@ -61,12 +61,12 @@ end
 function DConfigFrame_OnShow()
     PlaySound("igQuestListOpen");
 
-    -- Всегда держим окно настроек с масштабом 1.0 и по центру
+    -- Always keep the settings window at scale 1.0 and centered
     DConfigFrame:SetScale(1.0);
     DConfigFrame:ClearAllPoints();
     DConfigFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
 
-    -- Инициализация прокручиваемой области
+    -- Initialize the scroll area
     local scrollFrame = getglobal("DConfigScrollFrame");
     local scrollChild = getglobal("DConfigScrollChild");
     if scrollFrame and scrollChild then
@@ -75,32 +75,32 @@ function DConfigFrame_OnShow()
         scrollFrame:SetVerticalScroll(0);
     end
 
-    -- Устанавливаем цвета для подписей
+    -- Set colors for labels
     local scaleLabel = getglobal("DConfigScaleLabel");
     if scaleLabel then
         SetFontColor(scaleLabel, "DarkBrown");
-        scaleLabel:SetText("Масштаб:");
+        scaleLabel:SetText("Scale:");
     end
 
     local alphaLabel = getglobal("DConfigAlphaLabel");
     if alphaLabel then
         SetFontColor(alphaLabel, "DarkBrown");
-        alphaLabel:SetText("Прозрачность:");
+        alphaLabel:SetText("Transparency:");
     end
 
     local fontLabel = getglobal("DConfigFontLabel");
     if fontLabel then
         SetFontColor(fontLabel, "DarkBrown");
-        fontLabel:SetText("Размер шрифта:");
+        fontLabel:SetText("Font size:");
     end
 
     local fontSelectLabel = getglobal("DConfigFontSelectLabel");
     if fontSelectLabel then
         SetFontColor(fontSelectLabel, "DarkBrown");
-        fontSelectLabel:SetText("Шрифт:");
+        fontSelectLabel:SetText("Font:");
     end
 
-    -- Обновляем значения в полях ввода
+    -- Update values in input fields
     local scaleEditBox = getglobal("DConfigScaleEditBox");
     if scaleEditBox then
         scaleEditBox:SetText(string.format("%.1f", DialogUI_Config.scale));
@@ -116,21 +116,21 @@ function DConfigFrame_OnShow()
         fontEditBox:SetText(string.format("%.1f", DialogUI_Config.fontSize));
     end
 
-    -- Обновляем кнопки выбора шрифта
+    -- Update font selection buttons
     DConfigFrame_UpdateFontButtons();
 
-    -- Применяем текущую прозрачность к фону окна настроек
+    -- Apply current transparency to the settings window background
     DialogUI_ApplyConfigAlpha();
 
-    -- Добавляем элементы управления камерой ПОСЛЕ кнопок шрифтов
+    -- Add camera controls AFTER font buttons
     if DynamicCamera and DynamicCamera.AddConfigControls then
-        -- Проверяем, были ли уже созданы контролы камеры
+        -- Check whether camera controls have already been created
         if not getglobal("DCameraSectionTitle") then
-            -- Создаем контролы (они создадутся с привязкой по умолчанию)
+            -- Create controls (they will be created with default anchoring)
             DynamicCamera:AddConfigControls();
         end
         
-        -- Перемещаем существующие контролы камеры, привязывая к ПЕРВОЙ кнопке шрифта
+        -- Move existing camera controls, anchoring to the FIRST font button
         DialogUI_PositionCameraControls();
     end
 end
@@ -139,19 +139,19 @@ function DConfigFrame_OnHide()
     PlaySound("igQuestListClose");
 end
 
--- Функция для правильного позиционирования элементов камеры после кнопок шрифтов
+-- Function for correctly positioning camera elements after font buttons
 function DialogUI_PositionCameraControls()
     if not DynamicCamera then return; end
     
     local cameraSection = getglobal("DCameraSectionTitle");
     if not cameraSection then return; end
     
-    -- Привязываем секцию камеры к ПЕРВОЙ кнопке шрифта (DConfigFontButton1)
+    -- Anchor the camera section to the FIRST font button (DConfigFontButton1)
     cameraSection:ClearAllPoints();
     cameraSection:SetPoint("TOP", "DConfigFontButton1", "BOTTOM", 0, -70);
-    -- Отступ -70 означает: 10px после второго ряда + 10px отступ + 50px дополнительно
+    -- Offset -70 means: 10px after the second row + 10px padding + 50px extra
     
-    -- Перемещаем остальные элементы камеры (они обычно привязаны к заголовку)
+    -- Move the remaining camera elements (they are usually anchored to the title)
     local cameraEnableCheck = getglobal("DCameraEnableCheck");
     if cameraEnableCheck then
         cameraEnableCheck:ClearAllPoints();
@@ -164,7 +164,7 @@ function DialogUI_PositionCameraControls()
         cameraPresetLabel:SetPoint("TOP", cameraEnableCheck, "BOTTOM", 0, -15);
     end
     
-    -- Привязываем пресеты к первой кнопке шрифта для правильного выравнивания
+    -- Anchor presets to the first font button for correct alignment
     local cinematicButton = getglobal("DCameraCinematicButton");
     if cinematicButton then
         cinematicButton:ClearAllPoints();
@@ -189,34 +189,34 @@ function DialogUI_PositionCameraControls()
         wideButton:SetPoint("LEFT", normalButton, "RIGHT", 10, 0);
     end
     
-    -- Обновляем если есть функция обновления
+    -- Update if an update function exists
     if DynamicCamera.UpdateConfigControls then
         DynamicCamera.UpdateConfigControls();
     end
     
-    -- Корректируем высоту скролл-контейнера, чтобы вместить все элементы
+    -- Adjust the scroll container height to fit all elements
     local scrollChild = getglobal("DConfigScrollChild");
     if scrollChild then
-        -- Получаем нижнюю границу последнего элемента камеры
+        -- Get the bottom boundary of the last camera element
         local lastCameraControl = getglobal("DCameraWideButton") or getglobal("DCameraEnableCheck");
         if lastCameraControl then
             local bottom = lastCameraControl:GetBottom();
             local childTop = scrollChild:GetTop();
             if bottom and childTop then
-                local requiredHeight = childTop - bottom + 50; -- +50 для отступа
+                local requiredHeight = childTop - bottom + 50; -- +50 for padding
                 scrollChild:SetHeight(math.max(requiredHeight, 900));
             end
         end
     end
 end
 
--- Функции полей ввода
+-- Input field functions
 function DConfigScaleEditBox_OnEnterPressed()
     local editBox = getglobal("DConfigScaleEditBox");
     if not editBox then return; end
 
     local text = editBox:GetText();
-    -- Заменяем запятую на точку для поддержки десятичных чисел
+    -- Replace comma with period to support decimal numbers
     text = string.gsub(text, ",", ".");
     local value = tonumber(text);
 
@@ -227,12 +227,12 @@ function DConfigScaleEditBox_OnEnterPressed()
         DialogUI_SaveConfig();
         editBox:ClearFocus();
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Масштаб установлен на " .. string.format("%.1f", value));
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Scale set to " .. string.format("%.1f", value));
         end
     else
         editBox:SetText(string.format("%.1f", DialogUI_Config.scale));
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Масштаб должен быть между 0.5 и 2.0 (пример: 1.5)");
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Scale must be between 0.5 and 2.0 (example: 1.5)");
         end
     end
 end
@@ -251,12 +251,12 @@ function DConfigAlphaEditBox_OnEnterPressed()
         DialogUI_SaveConfig();
         editBox:ClearFocus();
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Прозрачность установлена на " .. value .. "%");
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Transparency set to " .. value .. "%");
         end
     else
         editBox:SetText(tostring(math.floor(DialogUI_Config.alpha * 100)));
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Прозрачность должна быть между 10 и 100 (только целые числа)");
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Transparency must be between 10 and 100 (whole numbers only)");
         end
     end
 end
@@ -266,7 +266,7 @@ function DConfigFontEditBox_OnEnterPressed()
     if not editBox then return; end
 
     local text = editBox:GetText();
-    -- Заменяем запятую на точку для поддержки десятичных чисел
+    -- Replace comma with period to support decimal numbers
     text = string.gsub(text, ",", ".");
     local value = tonumber(text);
 
@@ -277,25 +277,25 @@ function DConfigFontEditBox_OnEnterPressed()
         DialogUI_SaveConfig();
         editBox:ClearFocus();
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Размер шрифта установлен на " .. string.format("%.1f", value));
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Font size set to " .. string.format("%.1f", value));
         end
     else
         editBox:SetText(string.format("%.1f", DialogUI_Config.fontSize));
         if DEFAULT_CHAT_FRAME then
-            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Размер шрифта должен быть между 0.5 и 2.0 (пример: 1.2)");
+            DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Font size must be between 0.5 and 2.0 (example: 1.2)");
         end
     end
 end
 
--- Функции кнопок
+-- Button functions
 function DConfigResetButton_OnClick()
-    -- Сброс к значениям по умолчанию
+    -- Reset to default values
     DialogUI_Config.scale = 1.0;
     DialogUI_Config.alpha = 1.0;
     DialogUI_Config.fontSize = 1.0;
     DialogUI_Config.fontFile = "frizqt___cyr.ttf";
 
-    -- Обновляем поля ввода
+    -- Update input fields
     local scaleEditBox = getglobal("DConfigScaleEditBox");
     if scaleEditBox then
         scaleEditBox:SetText("1.0");
@@ -311,15 +311,15 @@ function DConfigResetButton_OnClick()
         fontEditBox:SetText("1.0");
     end
 
-    -- Обновляем кнопки шрифтов
+    -- Update font buttons
     DConfigFrame_UpdateFontButtons();
 
-    -- Применяем изменения
+    -- Apply changes
     DialogUI_ApplyAllSettings();
     DialogUI_SaveConfig();
 
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Настройки сброшены к значениям по умолчанию");
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Settings reset to default values");
     end
     PlaySound("igQuestListComplete");
 end
@@ -328,24 +328,24 @@ function DConfigCloseButton_OnClick()
     HideUIPanel(DConfigFrame);
 end
 
--- Функции применения конфигурации
+-- Configuration apply functions
 function DialogUI_ApplyScale()
     local scale = DialogUI_Config.scale;
 
-    -- Применяем масштаб только к окнам диалогов, НЕ к окну конфигурации
+    -- Apply scale only to dialog windows, NOT to the config window
     if DQuestFrame then
         DQuestFrame:SetScale(scale);
     end
     if DGossipFrame then
         DGossipFrame:SetScale(scale);
     end
-    -- Окно конфигурации сохраняет фиксированный масштаб 1.0
+    -- The config window keeps a fixed scale of 1.0
 end
 
 function DialogUI_ApplyAlpha()
     local alpha = DialogUI_Config.alpha;
 
-    -- Применяем прозрачность к окну заданий и его панелям
+    -- Apply transparency to the quest window and its panels
     if DQuestFrame then
         DialogUI_ApplyAlphaToPanel(DQuestFrame, alpha);
 
@@ -370,7 +370,7 @@ function DialogUI_ApplyAlpha()
         end
     end
 
-    -- Применяем прозрачность к окну разговоров
+    -- Apply transparency to the gossip window
     if DGossipFrame then
         DialogUI_ApplyAlphaToPanel(DGossipFrame, alpha);
 
@@ -380,16 +380,16 @@ function DialogUI_ApplyAlpha()
         end
     end
 
-    -- Применяем прозрачность к любым фреймам денег, которые могут существовать
+    -- Apply transparency to any money frames that may exist
     local moneyFrame = getglobal("DQuestProgressRequiredMoneyFrame");
     if moneyFrame then
         DialogUI_ApplyAlphaToPanel(moneyFrame, alpha);
     end
 
-    -- Прозрачность окна конфигурации обрабатывается отдельно функцией DialogUI_ApplyConfigAlpha()
+    -- Config window transparency is handled separately by DialogUI_ApplyConfigAlpha()
 end
 
--- Вспомогательная функция для применения прозрачности к текстуре фона панели
+-- Helper function to apply transparency to a panel's background texture
 function DialogUI_ApplyAlphaToPanel(panel, alpha)
     if not panel then return; end
     local regions = {panel:GetRegions()};
@@ -405,23 +405,23 @@ function DialogUI_ApplyAlphaToPanel(panel, alpha)
     end
 end
 
--- Простая версия без сохранения исходных размеров
+-- Simple version without saving original sizes
 function DialogUI_ApplyFontSize()
     local fontSize = DialogUI_Config.fontSize;
     
-    -- Просто перебираем все фреймы и применяем масштаб
-    -- WoW автоматически использует базовый размер шрифта из шаблона
+    -- Iterate over all frames and apply scale
+    -- WoW automatically uses the base font size from the template
     
     if DQuestFrame then
-        -- Сначала "сбрасываем", перебирая все регионы и применяя масштаб
-        -- Так как базовый размер берется из шаблона, умножение на 1.0 даст исходный размер
-        DialogUI_ScaleFonts(DQuestFrame, 1.0);  -- Сброс к базовому
-        DialogUI_ScaleFonts(DQuestFrame, fontSize);  -- Применение нового масштаба
+        -- First "reset" by iterating all regions and applying scale
+        -- Since the base size comes from the template, multiplying by 1.0 gives the original size
+        DialogUI_ScaleFonts(DQuestFrame, 1.0);  -- Reset to base
+        DialogUI_ScaleFonts(DQuestFrame, fontSize);  -- Apply new scale
     end
     
     if DGossipFrame then
-        DialogUI_ScaleFonts(DGossipFrame, 1.0);  -- Сброс к базовому
-        DialogUI_ScaleFonts(DGossipFrame, fontSize);  -- Применение нового масштаба
+        DialogUI_ScaleFonts(DGossipFrame, 1.0);  -- Reset to base
+        DialogUI_ScaleFonts(DGossipFrame, fontSize);  -- Apply new scale
     end
 end
 
@@ -434,7 +434,7 @@ function DialogUI_ScaleFonts(frame, scale)
         if region and region:GetObjectType() == "FontString" then
             local fontName, fontSize, fontFlags = region:GetFont();
             if fontName and fontSize then
-                -- Для сброса используем scale=1.0, который вернет к размеру из шаблона
+                -- For reset, use scale=1.0 which returns to the template size
                 region:SetFont(fontName, fontSize * scale, fontFlags);
             end
         end
@@ -456,7 +456,7 @@ function DialogUI_ApplyAllSettings()
     DialogUI_ApplyFont();
 end
 
--- Сохранение/Загрузка конфигурации
+-- Save / Load configuration
 function DialogUI_SaveConfig()
     if not DialogUI_SavedConfig then
         DialogUI_SavedConfig = {};
@@ -479,7 +479,7 @@ function DialogUI_LoadConfig()
     end
 end
 
--- Функции показа/скрытия окна конфигурации
+-- Config window show/hide functions
 function DialogUI_ShowConfig()
     if DConfigFrame then
         ShowUIPanel(DConfigFrame);
@@ -500,7 +500,7 @@ function DialogUI_ToggleConfig()
     end
 end
 
--- Специальная функция прозрачности для окна конфигурации
+-- Special transparency function for the config window
 function DialogUI_ApplyConfigAlpha()
     local alpha = DialogUI_Config.alpha;
 
@@ -516,7 +516,7 @@ function DialogUI_ApplyConfigAlpha()
 end
 
 -- ==========================================
--- Функции выбора шрифта
+-- Font selection functions
 -- ==========================================
 
 function DConfigFrame_UpdateFontButtons()
@@ -528,16 +528,16 @@ function DConfigFrame_UpdateFontButtons()
         
         if button and check then
             if fontData.file == currentFont then
-                -- Выбранный шрифт
+                -- Selected font
                 check:Show();
                 button:SetNormalTexture("Interface\\AddOns\\DialogUI\\src\\assets\\art\\parchment\\ButtonHighlight-Gossip");
             else
-                -- Невыбранный шрифт
+                -- Unselected font
                 check:Hide();
                 button:SetNormalTexture("Interface\\AddOns\\DialogUI\\src\\assets\\art\\parchment\\OptionBackground-common");
             end
             
-            -- Устанавливаем текст кнопки
+            -- Set button text
             local text = getglobal(button:GetName() .. "Text");
             if text then
                 text:SetText(fontData.name);
@@ -554,17 +554,17 @@ function DConfigFontButton_OnClick(index)
     
     DialogUI_Config.fontFile = fontData.file;
     
-    -- Обновляем визуальное состояние кнопок
+    -- Update the visual state of buttons
     DConfigFrame_UpdateFontButtons();
     
-    -- Применяем шрифт
+    -- Apply the font
     DialogUI_ApplyFont();
     
-    -- Сохраняем
+    -- Save
     DialogUI_SaveConfig();
     
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Шрифт изменен на " .. fontData.name);
+        DEFAULT_CHAT_FRAME:AddMessage("DialogUI: Font changed to " .. fontData.name);
     end
     
     PlaySound("igMainMenuOptionCheckBoxOn");
@@ -574,17 +574,17 @@ function DialogUI_ApplyFont()
     local fontFile = DialogUI_Config.fontFile or "frizqt___cyr.ttf";
     local fontPath = "Interface\\AddOns\\DialogUI\\src\\assets\\font\\" .. fontFile;
     
-    -- Применяем шрифт ко всем текстовым элементам в DQuestFrame
+    -- Apply font to all text elements in DQuestFrame
     if DQuestFrame then
         DialogUI_SetFontForFrame(DQuestFrame, fontPath);
     end
     
-    -- Применяем шрифт ко всем текстовым элементам в DGossipFrame
+    -- Apply font to all text elements in DGossipFrame
     if DGossipFrame then
         DialogUI_SetFontForFrame(DGossipFrame, fontPath);
     end
     
-    -- Применяем шрифт к окну конфигурации
+    -- Apply font to the config window
     if DConfigFrame then
         DialogUI_SetFontForFrame(DConfigFrame, fontPath);
     end
@@ -604,7 +604,7 @@ function DialogUI_SetFontForFrame(frame, fontPath)
         end
     end
     
-    -- Рекурсивно обрабатываем дочерние фреймы
+    -- Recursively process child frames
     local children = {frame:GetChildren()};
     for i = 1, table.getn(children) do
         local child = children[i];

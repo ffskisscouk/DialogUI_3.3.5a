@@ -1,26 +1,26 @@
 function ScrollFrameTemplate_OnMouseWheel(value, scrollBar)
-    -- Безопасное получение значения колесика
+    -- Safe retrieval of mouse wheel value
     local delta = 0;
     
     if type(value) == "number" then
         delta = value;
     elseif type(value) == "table" then
-        -- Если это таблица, пытаемся получить первый элемент
+        -- If it's a table, try to get the first element
         delta = tonumber(value[1]) or 0;
     else
-        -- Пытаемся преобразовать в число
+        -- Try to convert to a number
         delta = tonumber(value) or 0;
     end
     
-    -- Проверяем существование this
+    -- Check existence of 'this'
     local frame = this;
     if not frame then return; end
     
-    -- Получаем скроллбар
+    -- Get scrollbar
     scrollBar = scrollBar or getglobal(frame:GetName() .. "ScrollBar");
     if not scrollBar then return; end
     
-    -- Прокручиваем
+    -- Scroll
     if (delta > 0) then
         scrollBar:SetValue(scrollBar:GetValue() - (scrollBar:GetHeight() / 2));
     elseif (delta < 0) then
@@ -30,7 +30,7 @@ end
 
 -- Scrollframe functions
 function ScrollFrame_OnLoad()
-    -- Проверяем существование this
+    -- Check existence of 'this'
     local frame = this;
     if not frame then return; end
     
@@ -53,19 +53,19 @@ function ScrollFrame_OnLoad()
 end
 
 function ScrollFrame_OnScrollRangeChanged(scrollrange)
-    -- Проверяем существование this
+    -- Check existence of 'this'
     local frame = this;
     if not frame then return; end
     
     local frameName = frame:GetName();
     if not frameName then return; end
     
-    -- Проверка: если scrollrange это таблица, извлекаем значение
+    -- If scrollrange is a table, extract the value
     if type(scrollrange) == "table" then
         scrollrange = scrollrange[1] or 0;
     end
     
-    -- Убедимся что scrollrange это число
+    -- Ensure scrollrange is a number
     scrollrange = tonumber(scrollrange) or 0;
     
     local scrollbarName = frameName .. "ScrollBar";
@@ -80,7 +80,7 @@ function ScrollFrame_OnScrollRangeChanged(scrollrange)
         scrollrange = tonumber(range) or 0;
     end
     
-    -- Еще раз проверяем что scrollrange число
+    -- Ensure scrollrange is a number again
     if type(scrollrange) == "table" then
         scrollrange = scrollrange[1] or 0;
     end
@@ -93,27 +93,27 @@ function ScrollFrame_OnScrollRangeChanged(scrollrange)
     scrollbar:SetMinMaxValues(0, scrollrange);
     scrollbar:SetValue(value);
     
-    -- Получаем кнопки
+    -- Get buttons
     local downButton = getglobal(scrollbarName .. "ScrollDownButton");
     local upButton = getglobal(scrollbarName .. "ScrollUpButton");
     local thumbTexture = getglobal(scrollbarName .. "ThumbTexture");
     
-    -- Безопасное сравнение с использованием floor
+    -- Safe comparison using floor
     local scrollrangeNum = floor(scrollrange);
     if (scrollrangeNum == 0) then
         if (frame.scrollBarHideable) then
-            -- Скрываем скроллбар и кнопки
+            -- Hide scrollbar and buttons
             if scrollbar then scrollbar:Hide(); end
             if downButton then downButton:Hide(); end
             if upButton then upButton:Hide(); end
         else
-            -- Отключаем кнопки
+            -- Disable buttons
             if downButton then downButton:Disable(); downButton:Show(); end
             if upButton then upButton:Disable(); upButton:Show(); end
         end
         if thumbTexture then thumbTexture:Hide(); end
     else
-        -- Показываем и включаем все
+        -- Show and enable everything
         if downButton then downButton:Show(); downButton:Enable(); end
         if upButton then upButton:Show(); upButton:Enable(); end
         if scrollbar then scrollbar:Show(); end
@@ -126,7 +126,7 @@ function ScrollFrame_OnScrollRangeChanged(scrollrange)
     local middle = getglobal(frameName .. "Middle");
     
     if (top and bottom and frame.scrollBarHideable) then
-        -- Безопасное получение диапазона прокрутки
+        -- Safe retrieval of scroll range
         local verticalRange = frame:GetVerticalScrollRange();
         if type(verticalRange) == "table" then
             verticalRange = verticalRange[1] or 0;
@@ -143,7 +143,7 @@ function ScrollFrame_OnScrollRangeChanged(scrollrange)
     end
     
     if (middle and frame.scrollBarHideable) then
-        -- Безопасное получение диапазона прокрутки
+        -- Safe retrieval of scroll range
         local verticalRange = frame:GetVerticalScrollRange();
         if type(verticalRange) == "table" then
             verticalRange = verticalRange[1] or 0;
