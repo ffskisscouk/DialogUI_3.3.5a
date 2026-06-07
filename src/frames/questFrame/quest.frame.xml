@@ -96,7 +96,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                this:SetText("Отмена");
+                                this:SetText("Decline");
                             </OnLoad>
                             <OnClick>
                                 DQuestRewardCancelButton_OnClick();
@@ -628,7 +628,7 @@
                         </Layers>
                         <Scripts>
                             <OnLoad>
-                                this:SetText("Принять");
+                                this:SetText("Accept");
                             </OnLoad>
                             <OnClick>
                                 DQuestDetailAcceptButton_OnClick();
